@@ -26,6 +26,11 @@ class AccountService:
         pass
 
     @staticmethod
+    def has_account(email) -> bool:
+        """check if account exists"""
+        return Account.query.filter_by(email=email).first() is not None
+
+    @staticmethod
     def authenticate(email: str, password: str) -> Account:
         """authenticate account with email and password"""
 

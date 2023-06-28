@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 from flask import current_app, request
 from flask_login import login_required, current_user
-from flask_restful import Resource, reqparse, fields, marshal_with
+from flask_restful import Resource, reqparse, fields, marshal_with, inputs
 
 from controllers.console import api
 from controllers.console.setup import setup_required
@@ -13,8 +13,8 @@ from controllers.console.workspace.error import AccountAlreadyInitedError, Inval
 from controllers.console.wraps import account_initialization_required
 from libs.helper import TimestampField, supported_language, timezone
 from extensions.ext_database import db
-from models.account import InvitationCode, AccountIntegrate
-from services.account_service import AccountService
+from models.account import InvitationCode, AccountIntegrate, Account
+from services.account_service import AccountService,RegisterService
 
 
 account_fields = {
@@ -175,6 +175,54 @@ class AccountTimezoneApi(Resource):
 
         return updated_account
 
+class AccountListApi(Resource):
+
+    app_pagination_fields = {
+        'page': fields.Integer,
+        'limit': fields.Integer(attribute='per_page'),
+        'total': fields.Integer,
+        'has_more': fields.Boolean(attribute='has_next'),
+        'data': fields.List(fields.Nested(account_fields), attribute='items')
+        }
+
+    @marshal_with(app_pagination_fields)
+    def get(self):
+        
+        parser = reqparse.RequestParser()
+        parser.add_argument('page', type=inputs.int_range(1, 99999), required=False, default=1, location='args')
+        parser.add_argument('limit', type=inputs.int_range(1, 100), required=False, default=20, location='args')
+        args = parser.parse_args()
+
+        app_models = db.paginate(
+            db.select(Account),
+            page=args['page'],
+            per_page=args['limit'],
+            error_out=False)
+
+        return app_models
+        # return db.session.query(Account).all()
+
+class AccountAddApi(Resource):
+
+    # @marshal_with(account_fields)
+    def post(self):
+        
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str, required=True, location='json')
+        parser.add_argument('email', type=str, required=True, location='json')
+        parser.add_argument('password', type=str, required=True, location='json')
+
+        args = parser.parse_args()
+
+        if AccountService.has_account(email=args['email']):
+            return {"result": "failed", "message": "Email already exists."}
+        
+        else: 
+            RegisterService.register(
+            email=args['email'],
+            name=args['name'],
+            password=args['password'])
+            return {"result": "success"}
 
 class AccountPasswordApi(Resource):
     @setup_required
@@ -259,5 +307,7 @@ api.add_resource(AccountInterfaceThemeApi, '/account/interface-theme')
 api.add_resource(AccountTimezoneApi, '/account/timezone')
 api.add_resource(AccountPasswordApi, '/account/password')
 api.add_resource(AccountIntegrateApi, '/account/integrates')
+api.add_resource(AccountAddApi, '/account/add')
+api.add_resource(AccountListApi, '/account/list')
 # api.add_resource(AccountEmailApi, '/account/email')
 # api.add_resource(AccountEmailVerifyApi, '/account/email-verify')

@@ -67,5 +67,6 @@ class SavedMessageService:
         if not saved_message:
             return
 
+
         db.session.delete(saved_message)
         db.session.commit()
