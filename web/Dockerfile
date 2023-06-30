@@ -20,8 +20,8 @@ COPY . /app/web/
 RUN npm run build
 
 COPY docker/pm2.json /app/web/pm2.json
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY --chmod=7777 docker/entrypoint.sh /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
 
 ARG COMMIT_SHA
 ENV COMMIT_SHA ${COMMIT_SHA}

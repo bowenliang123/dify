@@ -25,7 +25,7 @@ const Apps = () => {
   const anchorRef = useRef<HTMLAnchorElement>(null)
 
   useEffect(() => {
-    document.title = `${t('app.title')} -  Dify`
+    document.title = `${t('app.title')} - GFGPT`
     if (localStorage.getItem(NEED_REFRESH_APP_LIST_KEY) === '1') {
       localStorage.removeItem(NEED_REFRESH_APP_LIST_KEY)
       mutate()
