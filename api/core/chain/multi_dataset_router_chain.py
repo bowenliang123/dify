@@ -15,7 +15,7 @@ from core.llm.llm_builder import LLMBuilder
 from core.tool.dataset_index_tool import DatasetTool
 from models.dataset import Dataset, DatasetProcessRule
 
-DEFAULT_K = 2
+DEFAULT_K = 5
 CONTEXT_TOKENS_PERCENT = 0.3
 MULTI_PROMPT_ROUTER_TEMPLATE = """
 Given a raw text input to a language model select the model prompt best suited for \
