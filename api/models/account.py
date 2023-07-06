@@ -4,7 +4,9 @@ from typing import List
 from flask_login import UserMixin
 from extensions.ext_database import db
 from sqlalchemy.dialects.postgresql import UUID
+from flask_restful import fields
 
+from libs.helper import TimestampField
 
 class AccountStatus(str, enum.Enum):
     PENDING = 'pending'
@@ -95,6 +97,22 @@ class Account(UserMixin, db.Model):
         return db.session.query(ai).filter(
             ai.account_id == self.id
         ).all()
+
+    @staticmethod
+    def get_account_filed() -> dict:
+        return {
+        'id': fields.String,
+        'name': fields.String,
+        'avatar': fields.String,
+        'email': fields.String,
+        'interface_language': fields.String,
+        'interface_theme': fields.String,
+        'timezone': fields.String,
+        'last_login_at': TimestampField,
+        'last_login_ip': fields.String,
+        'created_at': TimestampField
+    }
+
 
 
 class Tenant(db.Model):

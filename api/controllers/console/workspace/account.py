@@ -202,6 +202,16 @@ class AccountListApi(Resource):
         return app_models
         # return db.session.query(Account).all()
 
+class AccountListByNameApi(Resource):
+
+    @marshal_with(account_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str, required=True, location='args')
+        args = parser.parse_args()
+
+        return AccountService.list_accounts_by_name(args['name'])
+
 class AccountAddApi(Resource):
 
     # @marshal_with(account_fields)
@@ -309,5 +319,6 @@ api.add_resource(AccountPasswordApi, '/account/password')
 api.add_resource(AccountIntegrateApi, '/account/integrates')
 api.add_resource(AccountAddApi, '/account/add')
 api.add_resource(AccountListApi, '/account/list')
+api.add_resource(AccountListByNameApi, '/account/listbyname')
 # api.add_resource(AccountEmailApi, '/account/email')
 # api.add_resource(AccountEmailVerifyApi, '/account/email-verify')

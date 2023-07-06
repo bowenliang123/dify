@@ -13,9 +13,12 @@ WORKDIR /app/web
 
 COPY package.json /app/web/package.json
 
-RUN npm install --only=prod
 
 COPY . /app/web/
+
+RUN npm install --registry http://npm.gf.com.cn --only=prod
+
+# COPY . /app/web/
 
 RUN npm run build
 
