@@ -10,7 +10,7 @@ import AccountDropdown from './account-dropdown'
 import AppNav from './app-nav'
 import DatasetNav from './dataset-nav'
 import s from './index.module.css'
-import type { GithubRepo, LangGeniusVersionResponse, UserProfileResponse } from '@/models/common'
+import type { LangGeniusVersionResponse, UserProfileResponse } from '@/models/common'
 import { WorkspaceProvider } from '@/context/workspace-context'
 import { Grid01 } from '@/app/components/base/icons/src/vender/line/layout'
 import { Grid01 as Grid01Solid } from '@/app/components/base/icons/src/vender/solid/layout'
@@ -46,9 +46,9 @@ const Header: FC<IHeaderProps> = ({
   const [starCount, setStarCount] = useState(0)
 
   useEffect(() => {
-    globalThis.fetch('https://api.github.com/repos/langgenius/dify').then(res => res.json()).then((data: GithubRepo) => {
-      setStarCount(data.stargazers_count)
-    })
+    // globalThis.fetch('https://api.github.com/repos/langgenius/dify').then(res => res.json()).then((data: GithubRepo) => {
+    //   setStarCount(data.stargazers_count)
+    // })
   }, [])
 
   return (
@@ -67,18 +67,18 @@ const Header: FC<IHeaderProps> = ({
             <div className={s.logo} />
           </Link>
           {
-            starCount > 0 && (
-              <Link
-                href='https://github.com/langgenius/dify'
-                target='_blank'
-                className='flex items-center leading-[18px] border border-gray-200 rounded-md text-xs text-gray-700 font-semibold overflow-hidden'>
-                <div className='flex items-center px-2 py-1 bg-gray-100'>
-                  <div className={`${s['github-icon']} mr-1 rounded-full`} />
-                  Star
-                </div>
-                <div className='px-2 py-1 bg-white border-l border-gray-200'>{`${starCount}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
-              </Link>
-            )
+            // starCount > 0 && (
+            //   <Link
+            //     href='https://github.com/langgenius/dify'
+            //     target='_blank'
+            //     className='flex items-center leading-[18px] border border-gray-200 rounded-md text-xs text-gray-700 font-semibold overflow-hidden'>
+            //     <div className='flex items-center px-2 py-1 bg-gray-100'>
+            //       <div className={`${s['github-icon']} mr-1 rounded-full`} />
+            //       Star
+            //     </div>
+            //     <div className='px-2 py-1 bg-white border-l border-gray-200'>{`${starCount}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+            //   </Link>
+            // )
           }
         </div>
         <div className='flex items-center'>

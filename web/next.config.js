@@ -38,6 +38,18 @@ const nextConfig = {
       },
     ]
   },
+  async rewrites() {
+    console.log('Rewrites called')
+    return process.env.NEXT_REMOTE_DEBUGGING
+      ? [
+        {
+          source: '/console/api/:path*',
+          destination: `${process.env.REMOTE_API_URL}/:path*`,
+        },
+        { source: '/api/:path*', destination: `${process.env.RREMODE_PUBLIC_API_PREFIX}/:path*` },
+      ]
+      : []
+  },
 }
 
 module.exports = withMDX(nextConfig)

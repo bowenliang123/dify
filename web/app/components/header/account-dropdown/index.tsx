@@ -2,11 +2,8 @@
 import { useTranslation } from 'react-i18next'
 import { Fragment, useState } from 'react'
 import { useContext } from 'use-context-selector'
-import classNames from 'classnames'
-import Link from 'next/link'
-import { ArrowRightOnRectangleIcon, ArrowTopRightOnSquareIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
+import { ArrowRightOnRectangleIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Menu, Transition } from '@headlessui/react'
-import Indicator from '../indicator'
 import AccountSetting from '../account-setting'
 import AccountAbout from '../account-about'
 import WorkplaceSelector from './workplace-selector'
@@ -85,7 +82,7 @@ export default function AppSelector({ userProfile, onLogout, langeniusVersionInf
                   <div>{t('common.userProfile.settings')}</div>
                 </div>
               </Menu.Item>
-              <Menu.Item>
+              {/* <Menu.Item>
                 <Link
                   className={classNames(itemClassName, 'group justify-between')}
                   href={
@@ -95,8 +92,8 @@ export default function AppSelector({ userProfile, onLogout, langeniusVersionInf
                   <div>{t('common.userProfile.helpCenter')}</div>
                   <ArrowTopRightOnSquareIcon className='hidden w-4 h-4 group-hover:flex' />
                 </Link>
-              </Menu.Item>
-              <Menu.Item>
+              </Menu.Item> */}
+              {/* <Menu.Item>
                 <div className={classNames(itemClassName, 'justify-between')} onClick={() => setAboutVisible(true)}>
                   <div>{t('common.userProfile.about')}</div>
                   <div className='flex items-center'>
@@ -104,7 +101,7 @@ export default function AppSelector({ userProfile, onLogout, langeniusVersionInf
                     <Indicator color={langeniusVersionInfo.current_version === langeniusVersionInfo.latest_version ? 'green' : 'orange'} />
                   </div>
                 </div>
-              </Menu.Item>
+              </Menu.Item> */}
             </div>
             <Menu.Item>
               <div className='p-1' onClick={() => onLogout()}>

@@ -21,14 +21,20 @@ from models.account import *
 class AccountService:
 
     @staticmethod
-    def load_user(account_id: int) -> Account:
+    def load_user(account_id: str) -> Account:
         # todo: used by flask_login
-        pass
+        return Account.query.get(account_id)
 
     @staticmethod
     def has_account(email) -> bool:
         """check if account exists"""
         return Account.query.filter_by(email=email).first() is not None
+    
+    @staticmethod
+    def list_accounts_by_name(name):
+        """list accounts by name"""
+        accounts = Account.query.filter(Account.name.like('%{}%'.format(name))).limit(10).all()
+        return accounts
 
     @staticmethod
     def authenticate(email: str, password: str) -> Account:
@@ -151,6 +157,11 @@ class AccountService:
 class TenantService:
 
     @staticmethod
+    def load_tenant(id: str) -> Tenant:
+        """Load tenant"""
+        return Tenant.query.get(id)
+
+    @staticmethod
     def create_tenant(name: str) -> Tenant:
         """Create tenant"""
         tenant = Tenant(name=name)
@@ -161,6 +172,11 @@ class TenantService:
         tenant.encrypt_public_key = generate_key_pair(tenant.id)
         db.session.commit()
         return tenant
+    
+    @staticmethod
+    def has_tenant(name: str) -> bool:
+        """Check if tenant exists"""
+        return Tenant.query.filter_by(name=name).first() is not None
 
     @staticmethod
     def create_tenant_member(tenant: Tenant, account: Account, role: str = 'normal') -> TenantAccountJoin:

@@ -1,0 +1,49 @@
+.workspaceStyle {
+  margin: 0 35px;
+  height: calc(100% - 70px);
+}
+
+.createBtn {
+  margin: 15px auto;
+}
+
+.createBtn button {
+  color: #1C64F3;
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 150px;
+  height: 30px;
+  border: 1px solid #E5E7EB;
+  font-weight: bold;
+}
+
+.tableStyle {
+  height: 60%;
+  overflow-y: auto;
+}
+
+.tableStyle table {
+  width: 100%;
+}
+
+.pagination li {
+  list-style: none;
+}
+
+.labelStyle {
+  display: inline-block;
+  width: 150px;
+}
+
+.divStyle {
+  margin: 5px auto;
+}
+
+.divStyle input {
+  width: 570px;
+}
+
+.connectedtableStyle {
+  height: 360px;
+  overflow: auto;
+}

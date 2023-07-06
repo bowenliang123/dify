@@ -15,7 +15,7 @@ WORKDIR /app/api
 
 COPY requirements.txt /app/api/requirements.txt
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt -i https://pypi.gf.com.cn/simple
 
 COPY . /app/api/
 
