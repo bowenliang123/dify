@@ -1,6 +1,6 @@
 'use client'
 import type { FC } from 'react'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import cn from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { useBoolean, useClickAway } from 'ahooks'
@@ -25,13 +25,13 @@ export type IConifgModelProps = {
 }
 
 const options = [
-  { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo', type: AppType.chat },
-  { id: 'gpt-3.5-turbo-16k', name: 'gpt-3.5-turbo-16k', type: AppType.chat },
-  { id: 'gpt-4', name: 'gpt-4', type: AppType.chat }, // 8k version
-  { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo', type: AppType.completion },
-  { id: 'gpt-3.5-turbo-16k', name: 'gpt-3.5-turbo-16k', type: AppType.completion },
+  { id: 'gpt-3.5-turbo', name: 'chatglm', type: AppType.chat },
+  { id: 'gpt-3.5-turbo-16k', name: 'chatglm2', type: AppType.chat },
+  { id: 'gpt-4', name: '文心一言', type: AppType.chat }, // 8k version
+  { id: 'gpt-3.5-turbo', name: 'chatglm', type: AppType.completion },
+  { id: 'gpt-3.5-turbo-16k', name: 'chatglm2', type: AppType.completion },
   { id: 'text-davinci-003', name: 'text-davinci-003', type: AppType.completion },
-  { id: 'gpt-4', name: 'gpt-4', type: AppType.completion }, // 8k version
+  { id: 'gpt-4', name: '文心一言', type: AppType.completion }, // 8k version
 ]
 
 const ModelIcon = ({ className }: { className?: string }) => (
@@ -103,7 +103,12 @@ const ConifgModel: FC<IConifgModelProps> = ({
 
   const selectModelDisabled = false // chat  gpt-3.5-turbo, gpt-4; text generation text-davinci-003, gpt-3.5-turbo
 
-  const selectedModel = { name: modelId } // options.find(option => option.id === modelId)
+  const selectedModel = useMemo(() => {
+    const option = options.find((option) => {
+      return option.id === modelId
+    })
+    return { name: option?.name || '' }
+  }, [modelId])
   const [isShowOption, { setFalse: hideOption, toggle: toogleOption }] = useBoolean(false)
   const triggerRef = React.useRef(null)
   useClickAway(() => {
