@@ -55,6 +55,7 @@ class LLMBuilder:
             'top_p': kwargs.get('top_p', 1),
             'frequency_penalty': kwargs.get('frequency_penalty', 0),
             'presence_penalty': kwargs.get('presence_penalty', 0),
+            'user': 'gfgpt'
         }
 
         model_extras_kwargs = model_kwargs if mode == 'completion' else {'model_kwargs': model_kwargs}
