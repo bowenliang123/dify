@@ -21,6 +21,7 @@ const translation = {
   "reset": "Please run following command to reset your password",
   "withGitHub": "Continue with GitHub",
   "withGoogle": "Continue with Google",
+  "withGF": "Continue with gf",
   "rightTitle": "Unlock the full potential of LLM",
   "rightDesc": "Effortlessly build visually captivating, operable, and improvable AI applications.",
   "tos": "Terms of Service",

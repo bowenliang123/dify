@@ -7,7 +7,7 @@ import requests
 from flask import request, redirect, current_app, session
 from flask_restful import Resource
 
-from libs.oauth import OAuthUserInfo, GitHubOAuth, GoogleOAuth
+from libs.oauth import OAuthUserInfo, GitHubOAuth, GoogleOAuth, GFOauth
 from extensions.ext_database import db
 from models.account import Account, AccountStatus
 from services.account_service import AccountService, RegisterService
@@ -28,9 +28,18 @@ def get_oauth_providers():
                                    redirect_uri=current_app.config.get(
                                        'CONSOLE_URL') + '/console/api/oauth/authorize/google')
 
+        gf_oauth = GFOauth(client_id=current_app.config.get('GF_CLIENT_ID'),
+                           client_secret=current_app.config.get(
+                               'GF_CLIENT_SECRET'),
+                           redirect_uri=current_app.config.get(
+                               'APP_URL') + '/console/api/oauth/authorize/gf',
+                           conf=current_app.config
+                           )
+
         OAUTH_PROVIDERS = {
             'github': github_oauth,
-            'google': google_oauth
+            'google': google_oauth,
+            'gf': gf_oauth
         }
         return OAUTH_PROVIDERS
 
@@ -65,22 +74,30 @@ class OAuthCallback(Resource):
                 f"An error occurred during the OAuth process with {provider}: {e.response.text}")
             return {'error': 'OAuth process failed'}, 400
 
-        account = _generate_account(provider, user_info)
-        # Check account status
-        if account.status == AccountStatus.BANNED.value or account.status == AccountStatus.CLOSED.value:
-            return {'error': 'Account is banned or closed.'}, 403
+        account = _get_account_by_openid_or_email(provider, user_info)
 
-        if account.status == AccountStatus.PENDING.value:
-            account.status = AccountStatus.ACTIVE.value
-            account.initialized_at = datetime.utcnow()
-            db.session.commit()
+        if not account:
+            return {'error': f'Account {user_info.email} not found. Please concat admin to add this account first'}, 403
+        # Check account status
+        # if account.status == AccountStatus.BANNED.value or account.status == AccountStatus.CLOSED.value:
+        #     return {'error': 'Account is banned or closed.'}, 403
+        #
+        # if account.status == AccountStatus.PENDING.value:
+        #     account.status = AccountStatus.ACTIVE.value
+        #     account.initialized_at = datetime.utcnow()
+        #     db.session.commit()
 
         # login user
-        session.clear()
+        # session.clear()
         flask_login.login_user(account, remember=True)
+        logging.info('access_token: %s', token)
+        session["access_token"] = token
+        for k in session.keys():
+            logging.info('session key: ' + k)
+        logging.info('access_token from get: ' + session.get('access_token'))
         AccountService.update_last_login(account, request)
 
-        return redirect(f'{current_app.config.get("CONSOLE_URL")}?oauth_login=success')
+        return redirect(f'{current_app.config.get("APP_URL")}')
 
 
 def _get_account_by_openid_or_email(provider: str, user_info: OAuthUserInfo) -> Optional[Account]:

@@ -48,7 +48,8 @@ DEFAULTS = {
     'PDF_PREVIEW': 'True',
     'LOG_LEVEL': 'INFO',
     'DISABLE_PROVIDER_CONFIG_VALIDATION': 'False',
-    'DEFAULT_LLM_PROVIDER': 'openai'
+    'DEFAULT_LLM_PROVIDER': 'openai',
+    'GF_OAUTH_HOST': 'testoauth2.gf.com.cn'
 }
 
 
@@ -194,6 +195,11 @@ class Config:
         self.NOTION_INTEGRATION_TYPE = get_env('NOTION_INTEGRATION_TYPE')
         self.NOTION_INTERNAL_SECRET = get_env('NOTION_INTERNAL_SECRET')
         self.NOTION_INTEGRATION_TOKEN = get_env('NOTION_INTEGRATION_TOKEN')
+
+        # gf oauth setting
+        self.GF_CLIENT_ID = get_env('GF_CLIENT_ID')
+        self.GF_CLIENT_SECRET = get_env('GF_CLIENT_SECRET')
+        self.GF_OAUTH_HOST = get_env('GF_OAUTH_HOST')
 
 
 class CloudEditionConfig(Config):

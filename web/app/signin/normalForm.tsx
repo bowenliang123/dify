@@ -19,6 +19,7 @@ type IState = {
   formValid: boolean
   github: boolean
   google: boolean
+  gf: boolean
 }
 
 function reducer(state: IState, action: { type: string; payload: any }) {
@@ -66,6 +67,7 @@ const NormalForm = () => {
     formValid: false,
     github: false,
     google: false,
+    gf: false,
   })
 
   const [showPassword, setShowPassword] = useState(false)
@@ -115,6 +117,15 @@ const NormalForm = () => {
     })
     : null, oauth)
 
+  const { data: gf, error: gf_error } = useSWR(state.gf
+    ? ({
+      url: '/oauth/login/gf',
+      // params: {
+      //   provider: 'google',
+      // },
+    })
+    : null, oauth)
+
   useEffect(() => {
     if (github_error !== undefined)
       dispatch({ type: 'github_login_failed', payload: null })
@@ -129,6 +140,13 @@ const NormalForm = () => {
       window.location.href = google.redirect_url
   }, [google, google])
 
+  useEffect(() => {
+    if (gf_error !== undefined)
+      dispatch({ type: 'gf_login_failed', payload: null })
+    if (gf)
+      window.location.href = gf.redirect_url
+  }, [gf, gf_error])
+
   return (
     <>
       <div className="w-full mx-auto">
@@ -138,10 +156,10 @@ const NormalForm = () => {
 
       <div className="w-full mx-auto mt-8">
         <div className="bg-white ">
-          {!IS_CE_EDITION && (
+          {IS_CE_EDITION && (
             <div className="flex flex-col gap-3 mt-6">
               <div className='w-full'>
-                <a href={`${apiPrefix}/oauth/login/github`}>
+                <a href={`${apiPrefix}/oauth/login/gf`}>
                   <Button
                     type='default'
                     disabled={isLoading}
@@ -150,30 +168,11 @@ const NormalForm = () => {
                     <>
                       <span className={
                         classNames(
-                          style.githubIcon,
+                          style.logo,
                           'w-5 h-5 mr-2',
                         )
                       } />
-                      <span className="truncate">{t('login.withGitHub')}</span>
-                    </>
-                  </Button>
-                </a>
-              </div>
-              <div className='w-full'>
-                <a href={`${apiPrefix}/oauth/login/google`}>
-                  <Button
-                    type='default'
-                    disabled={isLoading}
-                    className='w-full'
-                  >
-                    <>
-                      <span className={
-                        classNames(
-                          style.googleIcon,
-                          'w-5 h-5 mr-2',
-                        )
-                      } />
-                      <span className="truncate">{t('login.withGoogle')}</span>
+                      <span className="truncate">{t('login.withGF')}</span>
                     </>
                   </Button>
                 </a>

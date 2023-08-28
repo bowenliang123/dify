@@ -8,6 +8,8 @@ from flask_login import current_user
 from extensions.ext_database import db
 from models.source import DataSourceBinding
 
+from flask import current_app
+
 
 @dataclass
 class OAuthUserInfo:
@@ -17,10 +19,11 @@ class OAuthUserInfo:
 
 
 class OAuth:
-    def __init__(self, client_id: str, client_secret: str, redirect_uri: str):
+    def __init__(self, client_id: str, client_secret: str, redirect_uri: str, conf: dict = None):
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
+        self.conf = conf
 
     def get_authorization_url(self):
         raise NotImplementedError()
@@ -138,6 +141,55 @@ class GoogleOAuth(OAuth):
             id=str(raw_info['sub']),
             name=None,
             email=raw_info['email']
+        )
+
+class GFOauth(OAuth):
+
+    def __init__(self, client_id: str, client_secret: str, redirect_uri: str, conf: dict):
+        super().__init__(client_id, client_secret, redirect_uri, conf)
+
+        self._HOST = self.conf.get('GF_OAUTH_HOST')
+        self._AUTH_URL = f'http://{self._HOST}/login'
+        self._TOKEN_URL = f'http://{self._HOST}/ws/pub/token/access_token'
+        self._USER_INFO_URL = f'http://{self._HOST}/ws/auth/user/info/default?access_token='
+
+    def get_authorization_url(self):
+        params = {
+            'client_id': self.client_id,
+            'redirect_uri': self.redirect_uri,
+            'login_type': 'oa',
+            'theme': 'default'
+        }
+        return f"{self._AUTH_URL}?{urllib.parse.urlencode(params)}"
+
+    def get_access_token(self, code: str):
+        data = {
+            'client_id': self.client_id,
+            'client_secret': self.client_secret,
+            'code': code,
+            'grant_type': 'code',
+        }
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        response = requests.post(self._TOKEN_URL, data=data, headers=headers)
+
+        response_json = response.json()
+        access_token = response_json.get('access_token')
+
+        if not access_token:
+            raise ValueError(f"Error in GF OAuth: {response_json}")
+
+        return access_token
+
+    def get_raw_user_info(self, token: str):
+        response = requests.get(self._USER_INFO_URL + token)
+        response.raise_for_status()
+        return response.json()
+
+    def _transform_user_info(self, raw_info: dict) -> OAuthUserInfo:
+        return OAuthUserInfo(
+            id=str(raw_info['oa']['uid']),
+            name=str(raw_info['oa']['loginid']),
+            email=raw_info['oa']['mail']
         )
 
 

@@ -1,7 +1,10 @@
 # -*- coding:utf-8 -*-
+import logging
+
 import flask
 import flask_login
-from flask import request, current_app
+import requests
+from flask import request, current_app, session
 from flask_restful import Resource, reqparse
 
 import services
@@ -49,8 +52,18 @@ class LogoutApi(Resource):
 
     @setup_required
     def get(self):
-        flask.session.pop('workspace_id', None)
+        logging.info(session.pop('workspace_id', None))
+        access_token = session.get('access_token')
+        logging.info('access_token: %s', access_token)
+        # flask.session.pop('access_token', None)
+        for k in session.keys():
+            logging.info('session key: %s', k)
         flask_login.logout_user()
+        # logout gf auth
+        if access_token:
+            GF_OAUTH_HOST = current_app.config['GF_OAUTH_HOST']
+            logging.info(requests.post(f'http://{GF_OAUTH_HOST}/ws/pub/token/access_token/cancel?access_token={access_token}'))
+        session.clear()
         return {'result': 'success'}
 
 
