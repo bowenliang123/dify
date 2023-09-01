@@ -87,7 +87,7 @@ class MultiDatasetRouterChain(Chain):
         """Convenience constructor for instantiating from destination prompts."""
         llm = LLMBuilder.to_llm(
             tenant_id=tenant_id,
-            model_name='gpt-3.5-turbo',
+            model_name='gpt-3.5-turbo-16k', # gpt-3.5-turbo映射的是讯飞模型, 不支持stream=false的传参
             temperature=0,
             max_tokens=1024,
             callbacks=[DifyStdOutCallbackHandler()]

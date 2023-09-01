@@ -119,7 +119,7 @@ class TenantAddApi(Resource):
         if TenantService.has_tenant(args['name']):
             return {'result': 'failed', 'message': 'You already have a workspace.'}, 400
         else:
-            TenantService.create_tenant(args['name'])
+            tenant = TenantService.create_tenant(args['name'])
             return {'result': 'success', 'message': 'Workspace created.'}, 200
         
 class TenantUserApi(Resource):

@@ -74,13 +74,10 @@ class OAuthCallback(Resource):
                 f"An error occurred during the OAuth process with {provider}: {e.response.text}")
             return {'error': 'OAuth process failed'}, 400
 
-        account = _get_account_by_openid_or_email(provider, user_info)
+        with current_app.app_context():
+            default_workspace = current_app.config.get('DEFAULT_WORKSPACE')
 
-        if not account:
-            return {'error': f'Account {user_info.email} not found. Please concat admin to add this account first'}, 403
-        # Check account status
-        # if account.status == AccountStatus.BANNED.value or account.status == AccountStatus.CLOSED.value:
-        #     return {'error': 'Account is banned or closed.'}, 403
+        account = _generate_account(provider, user_info, default_workspace)
         #
         # if account.status == AccountStatus.PENDING.value:
         #     account.status = AccountStatus.ACTIVE.value
@@ -109,19 +106,20 @@ def _get_account_by_openid_or_email(provider: str, user_info: OAuthUserInfo) -> 
     return account
 
 
-def _generate_account(provider: str, user_info: OAuthUserInfo):
+def _generate_account(provider: str, user_info: OAuthUserInfo, default_workspace: str):
     # Get account by openid or email.
     account = _get_account_by_openid_or_email(provider, user_info)
 
     if not account:
         # Create account
-        account_name = user_info.name if user_info.name else 'Dify'
+        account_name = user_info.name if user_info.name else 'GfGpt'
         account = RegisterService.register(
             email=user_info.email,
             name=account_name,
             password=None,
             open_id=user_info.id,
-            provider=provider
+            provider=provider,
+            tenant_id=default_workspace
         )
 
         # Set interface language
@@ -132,9 +130,8 @@ def _generate_account(provider: str, user_info: OAuthUserInfo):
             interface_language = 'en-US'
         account.interface_language = interface_language
         db.session.commit()
-
-    # Link account
-    AccountService.link_account_integrate(provider, user_info.id, account)
+        # Link account
+        AccountService.link_account_integrate(provider, user_info.id, account)
 
     return account
 

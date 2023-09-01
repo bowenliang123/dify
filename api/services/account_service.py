@@ -354,7 +354,7 @@ class TenantService:
 class RegisterService:
 
     @staticmethod
-    def register(email, name, password: str = None, open_id: str = None, provider: str = None) -> Account:
+    def register(email, name, password: str = None, open_id: str = None, provider: str = None, tenant_id: str = None) -> Account:
         db.session.begin_nested()
         """Register account"""
         try:
@@ -365,9 +365,12 @@ class RegisterService:
             if open_id is not None or provider is not None:
                 AccountService.link_account_integrate(provider, open_id, account)
 
-            tenant = TenantService.create_tenant(f"{account.name}'s Workspace")
-
-            TenantService.create_tenant_member(tenant, account, role='owner')
+            if tenant_id is None:
+                tenant = TenantService.create_tenant(f"{account.name}'s Workspace")
+                TenantService.create_tenant_member(tenant, account, role='owner')
+            else:
+                tenant = TenantService.load_tenant(tenant_id)
+                TenantService.create_tenant_member(tenant, account, role='normal')
             account.current_tenant = tenant
 
             db.session.commit()
