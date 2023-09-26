@@ -32,7 +32,7 @@ def get_oauth_providers():
                            client_secret=current_app.config.get(
                                'GF_CLIENT_SECRET'),
                            redirect_uri=current_app.config.get(
-                               'APP_URL') + '/console/api/oauth/authorize/gf',
+                               'GF_REDIRECT_URL'),
                            conf=current_app.config
                            )
 

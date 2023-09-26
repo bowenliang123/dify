@@ -1,10 +1,9 @@
 'use client'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import Button from '@/app/components/base/button'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Toast from '../components/base/toast'
+import Button from '@/app/components/base/button'
 import { setup } from '@/service/common'
 
 const validEmailReg = /^[\w\.-]+@([\w-]+\.)+[\w-]{2,}$/
@@ -40,19 +39,20 @@ const InstallForm = () => {
       showErrorMessage(t('login.error.passwordEmpty'))
       return false
     }
-    if (!validPassword.test(password)) {
+    if (!validPassword.test(password))
       showErrorMessage(t('login.error.passwordInvalid'))
-    }
+
     return true
   }
   const handleSetting = async () => {
-    if (!valid()) return
+    if (!valid())
+      return
     await setup({
       body: {
         email,
         name,
-        password
-      }
+        password,
+      },
     })
     router.push('/signin')
   }
@@ -127,7 +127,7 @@ const InstallForm = () => {
             <div className="block mt-6 text-xs text-gray-600">
               {t('login.tosDesc')}
               &nbsp;
-              <Link
+              {/* <Link
                 className='text-primary-600'
                 target={'_blank'}
                 href='https://docs.dify.ai/user-agreement/terms-of-service'
@@ -137,7 +137,7 @@ const InstallForm = () => {
                 className='text-primary-600'
                 target={'_blank'}
                 href='https://langgenius.ai/privacy-policy'
-              >{t('login.pp')}</Link>
+              >{t('login.pp')}</Link> */}
             </div>
 
             <div>

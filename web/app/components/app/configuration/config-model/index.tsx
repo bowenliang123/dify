@@ -28,9 +28,11 @@ const options = [
   { id: 'gpt-3.5-turbo-16k', name: 'chatglm2(私有云)', type: AppType.chat },
   { id: 'gpt-4', name: '文心一言(公有云)', type: AppType.chat }, // 8k version
   { id: 'gpt-3.5-turbo', name: '讯飞星火(公有云)', type: AppType.chat },
+  { id: 'gpt-4-32k', name: '百川2(私有云)', type: AppType.chat },
   { id: 'gpt-3.5-turbo-16k', name: 'chatglm2(私有云)', type: AppType.completion },
   { id: 'gpt-4', name: '文心一言(公有云)', type: AppType.completion }, // 8k version
   { id: 'gpt-3.5-turbo', name: '讯飞星火(公有云)', type: AppType.completion },
+  { id: 'gpt-4-32k', name: '百川2(私有云)', type: AppType.completion },
   // { id: 'text-davinci-003', name: 'text-davinci-003', type: AppType.completion },
 ]
 

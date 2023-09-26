@@ -302,6 +302,20 @@ class TenantService:
             raise NoPermissionError(f'No permission to {action} member.')
 
     @staticmethod
+    def check_user_exist(tenant: Tenant, account: Account) -> bool:
+        """Check if user exists in tenant"""
+        ta = TenantAccountJoin.query.filter_by(tenant_id=tenant.id, account_id=account.id).first()
+        return ta is not None
+
+    @staticmethod
+    def remove_user_without_check(tenant: Tenant, account: Account) -> None:
+        """Remove user from tenant without check"""
+        ta = TenantAccountJoin.query.filter_by(tenant_id=tenant.id, account_id=account.id).first()
+        if ta:
+            db.session.delete(ta)
+            db.session.commit()
+
+    @staticmethod
     def remove_member_from_tenant(tenant: Tenant, account: Account, operator: Account) -> None:
         """Remove member from tenant"""
         # todo: check permission

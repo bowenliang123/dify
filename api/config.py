@@ -201,6 +201,7 @@ class Config:
         self.GF_CLIENT_SECRET = get_env('GF_CLIENT_SECRET')
         self.GF_OAUTH_HOST = get_env('GF_OAUTH_HOST')
         self.DEFAULT_WORKSPACE = get_env('DEFAULT_WORKSPACE')
+        self.GF_REDIRECT_URL = get_env('GF_REDIRECT_URL')
 
 
 class CloudEditionConfig(Config):

@@ -26,7 +26,7 @@ class LLMGenerator:
         prompt = prompt.format(query=query)
         llm: StreamableOpenAI = LLMBuilder.to_llm(
             tenant_id=tenant_id,
-            model_name='gpt-3.5-turbo',
+            model_name='gpt-3.5-turbo-16k',
             max_tokens=50
         )
 

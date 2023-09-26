@@ -153,6 +153,8 @@ class TenantUserApi(Resource):
             return {'result': 'failed', 'message': 'User not found.'}, 400
         
         role = args['role'] if args['role'] else 'normal'
+        if TenantService.check_user_exist(tenant, user):
+            TenantService.remove_user_without_check(tenant, user)
         tenant_join = TenantService.create_tenant_member(Tenant(id=args['tenant_id']), Account(id=args['user_id']), role)
         if tenant_join:
             return {'result': 'success'}, 200

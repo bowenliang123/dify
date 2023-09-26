@@ -21,6 +21,11 @@ COPY . /app/api/
 
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+RUN rm /etc/localtime && ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN python -c "import tiktoken; tiktoken.encoding_for_model('gpt2'); \
+    tiktoken.encoding_for_model('text-embedding-ada-002'); \
+    tiktoken.encoding_for_model('gpt-3.5-turbo');"
+
 
 ARG COMMIT_SHA
 ENV COMMIT_SHA ${COMMIT_SHA}
