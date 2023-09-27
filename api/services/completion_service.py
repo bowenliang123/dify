@@ -410,6 +410,7 @@ class CompletionService:
                             event = result.get('event')
                             if event == "end":
                                 logging.debug("{} finished".format(generate_channel))
+                                yield "data: " + json.dumps(cls.end_message_response_data(result.get('data'))) + "\n\n"
                                 break
 
                             if event == 'message':
@@ -429,6 +430,15 @@ class CompletionService:
                         pass
 
             return generate()
+
+    @classmethod
+    def end_message_response_data(cls, data: dict):
+        response_data = {
+            'event': 'end',
+            'answer': "",
+            'created_at': int(time.time())
+        }
+        return response_data
 
     @classmethod
     def get_message_response_data(cls, data: dict):

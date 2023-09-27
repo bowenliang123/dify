@@ -40,7 +40,7 @@ class LLMGenerator:
     @classmethod
     def generate_conversation_summary(cls, tenant_id: str, messages):
         max_tokens = 200
-        model = 'gpt-3.5-turbo'
+        model = 'gpt-3.5-turbo-16k'
 
         prompt = CONVERSATION_SUMMARY_PROMPT
         prompt_with_empty_context = prompt.format(context='')
@@ -103,7 +103,7 @@ class LLMGenerator:
 
         llm: StreamableOpenAI = LLMBuilder.to_llm(
             tenant_id=tenant_id,
-            model_name='gpt-3.5-turbo',
+            model_name='gpt-3.5-turbo-16k',
             temperature=0,
             max_tokens=256
         )

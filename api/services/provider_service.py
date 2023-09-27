@@ -96,3 +96,25 @@ class ProviderService:
             )
             db.session.add(provider)
             db.session.commit()
+
+    @staticmethod
+    def create_custom_provider(tenant: Tenant, provider_name: str = ProviderName.OPENAI.value,
+                               configs: Union[dict | str] = "default",
+                               is_valid: bool = True):
+        encrypt_token = ProviderService.get_encrypted_token(tenant, ProviderName.OPENAI, configs)
+        provider = db.session.query(Provider).filter(
+            Provider.tenant_id == tenant.id,
+            Provider.provider_name == provider_name,
+            Provider.provider_type == ProviderType.CUSTOM.value
+        ).one_or_none()
+
+        if not provider:
+            provider = Provider(
+                tenant_id=tenant.id,
+                provider_name=provider_name,
+                provider_type=ProviderType.CUSTOM.value,
+                encrypted_config=encrypt_token,
+                is_valid=is_valid,
+            )
+            db.session.add(provider)
+            db.session.commit()

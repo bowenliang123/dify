@@ -14,6 +14,7 @@ from libs.page_helper import page_data, page_data_with_args
 from extensions.ext_database import db
 from models.account import Tenant
 from services.account_service import TenantService, AccountService
+from services.provider_service import ProviderService
 from services.workspace_service import WorkspaceService
 from models.account import Account
 
@@ -120,6 +121,7 @@ class TenantAddApi(Resource):
             return {'result': 'failed', 'message': 'You already have a workspace.'}, 400
         else:
             tenant = TenantService.create_tenant(args['name'])
+            ProviderService.create_custom_provider(tenant)
             return {'result': 'success', 'message': 'Workspace created.'}, 200
         
 class TenantUserApi(Resource):
