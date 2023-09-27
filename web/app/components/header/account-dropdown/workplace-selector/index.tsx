@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { switchWorkspace } from '@/service/common'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronRightIcon, CheckIcon } from '@heroicons/react/24/outline'
@@ -9,6 +9,7 @@ import { ToastContext } from '@/app/components/base/toast'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 import { useWorkspacesContext } from '@/context/workspace-context'
+import { NEED_REFRESH_APP_LIST_KEY } from '@/config'
 
 const itemClassName = `
   flex items-center px-3 py-2 h-10 cursor-pointer
@@ -28,13 +29,27 @@ const WorkplaceSelector = () => {
   const router = useRouter()
   const { notify } = useContext(ToastContext)
   const { workspaces } = useWorkspacesContext()
-  const currentWrokspace = workspaces.filter(item => item.current)?.[0]
+  const [currentIndex, setCurrentIndex] = useState(0)
 
-  const handleSwitchWorkspace = async (tenant_id: string) => {
+  useEffect(() => {
+    workspaces.forEach((workspace, index) => {
+      workspace.current && setCurrentIndex(index)
+    })
+  }, [workspaces])
+
+  const handleSwitchWorkspace = async (tenant_id: string, index: number) => {
+    if (currentIndex === index)
+      return
     try {
       await switchWorkspace({ url: `/workspaces/switch`, body: { tenant_id } })
       notify({ type: 'success', message: t('common.actionMsg.modifiedSuccessfully') })
-      router.replace('/apps')
+      localStorage.setItem(NEED_REFRESH_APP_LIST_KEY, '1')
+      if (window.location.pathname === '/apps') {
+        router.refresh()
+      } else {
+        setCurrentIndex(index)
+        router.replace('/apps')
+      }
     } catch (e) {
       notify({ type: 'error', message: t('common.provider.saveFailed') })
     } finally {
@@ -53,7 +68,7 @@ const WorkplaceSelector = () => {
               `
             )}>
               <div className={itemIconClassName} />
-              <div className={`${itemNameClassName} truncate`}>{currentWrokspace?.name}</div>
+              <div className={`${itemNameClassName} truncate`}>{workspaces[currentIndex]?.name}</div>
               <ChevronRightIcon className='shrink-0 w-[14px] h-[14px]' />
             </Menu.Button>
             <Transition
@@ -76,11 +91,11 @@ const WorkplaceSelector = () => {
               >
                 <div className="px-1 py-1">
                   {
-                    workspaces.map(workspace => (
-                      <div className={itemClassName} key={workspace.id} onClick={() => handleSwitchWorkspace(workspace.id)}>
+                    workspaces.map((workspace, index) => (
+                      <div className={itemClassName} key={workspace.id} onClick={() => handleSwitchWorkspace(workspace.id, index)}>
                         <div className={itemIconClassName} />
                         <div className={itemNameClassName}>{workspace.name}</div>
-                        {workspace.current && <CheckIcon className={itemCheckClassName} />}
+                        {currentIndex === index && <CheckIcon className={itemCheckClassName} />}
                       </div>
                     ))
                   }
