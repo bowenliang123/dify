@@ -29,9 +29,15 @@ const ConnectedDialog = ({ show, dataList, onClose, onSuccess }: ConnectedDialog
 
   const onCreated = () => {
     const lists: any = []
+    const roleEle = document.getElementsByClassName('roleVale')
     document.getElementsByName('checkbox').forEach((element) => {
-      if (element.checked)
-        lists.push(JSON.parse(element.value))
+      if (element.checked) {
+        const dataVal = JSON.parse(element.value)
+        if (roleEle[0]?.value?.length > 0)
+          dataVal.role = roleEle[0].value
+
+        lists.push(dataVal)
+      }
     })
     if (lists.length <= 0) {
       notify({ type: 'info', message: '请至少选中一个用户' })
@@ -54,7 +60,7 @@ const ConnectedDialog = ({ show, dataList, onClose, onSuccess }: ConnectedDialog
 
   const onConnected = () => {
     const params = selectList.map((item) => {
-      return { user_id: item.id, tenant_id: dataList.id }
+      return { user_id: item.id, tenant_id: dataList.id, role: item.role }
     })
     let resArr = true
     params.forEach(async (it) => {
@@ -84,9 +90,18 @@ const ConnectedDialog = ({ show, dataList, onClose, onSuccess }: ConnectedDialog
           </>
         }
       >
-        <div>
+        <div style={{ display: 'inline-block' }}>
           用户姓名：
           <input type="text" onKeyDown={(e) => { onSearch(e) }} className='h-10 px-3 text-sm font-normal bg-gray-100 rounded-lg grow' />
+        </div>
+        <div style={{ display: 'inline-block', marginLeft: 30 }}>
+          角色：
+          <select className='roleVale' style={{ width: 180, borderRadius: 8, height: 40, backgroundColor: '#F3F4F6' }}>
+            <option value="">请选择角色</option>
+            <option value="admin">admin</option>
+            <option value="owner">owner</option>
+            <option value="normal">normal</option>
+          </select>
         </div>
         <div className={connectedList.length > 0 ? style.connectedtableStyle : ''}>
           {connectedList.length > 0
