@@ -111,7 +111,7 @@ class MultiDatasetRouterChain(Chain):
         dataset_tools = {}
         for dataset in datasets:
             # fulfill description when it is empty
-            if dataset.available_document_count == 0 or dataset.available_document_count == 0:
+            if dataset.available_document_count == 0:
                 continue
 
             description = dataset.description

@@ -108,7 +108,7 @@ class TenantListAllApi(Resource):
 
         return page_data_with_args(Tenant, args['page'], args['limit'])
 
-        r#eturn {'workspaces': marshal(tenants, tenants_fields)}, 200
+
 
 class TenantAddApi(Resource):
 
