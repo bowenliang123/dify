@@ -188,8 +188,8 @@ class GFOauth(OAuth):
     def _transform_user_info(self, raw_info: dict) -> OAuthUserInfo:
         return OAuthUserInfo(
             id=str(raw_info['oa']['uid']),
-            name=str(raw_info['oa']['loginid']),
-            email=raw_info['oa']['mail']
+            name=str(raw_info['oa'].get('displayname') or raw_info['oa'].get('cn')),
+            email=raw_info['oa'].get('mail') or raw_info['oa'].get('email')
         )
 
 
