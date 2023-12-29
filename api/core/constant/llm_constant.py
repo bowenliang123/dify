@@ -17,7 +17,7 @@ max_context_token_length = {
     'gpt-4': 16384,
     'gpt-4-32k': 32768,
     'gpt-3.5-turbo': 16384,
-    'gpt-3.5-turbo-16k': 16384,
+    'gpt-3.5-turbo-16k': 8191,
     'text-davinci-003': 4097,
     'text-davinci-002': 4097,
     'text-curie-001': 2049,

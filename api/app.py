@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 from datetime import datetime
+from libs.logging_config import config_logging
 
 if not os.environ.get("DEBUG") or os.environ.get("DEBUG").lower() != 'true':
     from gevent import monkey
@@ -61,8 +62,9 @@ def create_app(test_config=None) -> Flask:
             app.config.from_object(Config())
 
     app.secret_key = app.config['SECRET_KEY']
-
-    logging.basicConfig(level=app.config.get('LOG_LEVEL', 'INFO'))
+    config_logging(logging)
+    # logging.basicConfig(level=app.config.get('LOG_LEVEL', 'INFO'))
+    logging.info(f"App is running in {app.config['DEPLOY_ENV']} mode")
 
     initialize_extensions(app)
     register_blueprints(app)
@@ -76,13 +78,21 @@ def create_app(test_config=None) -> Flask:
 def initialize_extensions(app):
     # Since the application instance is now created, pass it to each Flask
     # extension instance to bind it to the Flask application instance (app)
+    logging.info("Initialize extensions database")
     ext_database.init_app(app)
+    logging.info("Initialize extensions migrate")
     ext_migrate.init(app, db)
+    logging.info("Initialize extensions redis")
     ext_redis.init_app(app)
+    logging.info("Initialize extensions storage")
     ext_storage.init_app(app)
+    logging.info("Initialize extensions celery")
     ext_celery.init_app(app)
+    logging.info("Initialize extensions session")
     ext_session.init_app(app)
+    logging.info("Initialize extensions login")
     ext_login.init_app(app)
+    logging.info("Initialize extensions sentry")
     ext_sentry.init_app(app)
 
 
