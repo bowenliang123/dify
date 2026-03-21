@@ -360,7 +360,7 @@ const AppCard = ({ app, onRefresh }: AppCardProps) => {
   const EditTimeText = useMemo(() => {
     const timeText = formatTime({
       date: (app.updated_at || app.created_at) * 1000,
-      dateFormat: `${t('segment.dateTimeFormat', { ns: 'datasetDocuments' })}`,
+      dateFormat: 'YYYY-MM-DD HH:mm',
     })
     return `${t('segment.editedAt', { ns: 'datasetDocuments' })} ${timeText}`
   }, [app.updated_at, app.created_at, t])
